@@ -1,14 +1,10 @@
 import os
-import multiprocessing as mp
-from flask import Flask, render_template
-from flask_apscheduler import APScheduler
-
 
 from random import randint
-from time import sleep
 
+from flask import Flask, render_template
+from flask_apscheduler import APScheduler
 from dotenv import load_dotenv
-from celery import Celery
 
 
 load_dotenv()
@@ -16,14 +12,6 @@ load_dotenv()
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'top secret!'
-
-# # Celery configuration
-# app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-# app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-
-# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-# celery.conf.update(app.config)
-
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['OAUTH2_PROVIDERS'] = {
@@ -40,10 +28,6 @@ app.config['OAUTH2_PROVIDERS'] = {
     },
 }
 
-# @celery.on_after_configure.connect
-# def setup_periodic_task(sender, **kwargs):
-#     sender.add_periodic_task(10.0, creating_random_value.s())
-
 
 def get_app():
     return app
@@ -55,8 +39,8 @@ def index():
 
 
 @app.route('/home')
-def home_page(arg):
-    return str(arg)
+def home_page():
+    return str(app.config.get('PASSED_VALUE'))
 
 
 @app.route('/git-webhook')
@@ -64,18 +48,21 @@ def git_webhook():
     pass
 
 
-def random_value_fabrication():
-    number = randint(1, 999)
-    print(number)
+def passed_value_fabrication():
+    value = randint(1, 999)
+    app.config['PASSED_VALUE'] = value
+    print(value)
+
 
 
 if __name__ == '__main__':
     app.run(debug=True)
 
 
+passed_value_fabrication()
 
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
-scheduler.add_job(id='test-job', func=random_value_fabrication, trigger='interval', seconds=5)
+scheduler.add_job(id='test-job', func=passed_value_fabrication, trigger='interval', seconds=5)
 

@@ -1,6 +1,8 @@
 import os
 import multiprocessing as mp
 from flask import Flask, render_template
+from flask_apscheduler import APScheduler
+
 
 from random import randint
 from time import sleep
@@ -14,6 +16,15 @@ load_dotenv()
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'top secret!'
+
+# # Celery configuration
+# app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+# app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+# celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+# celery.conf.update(app.config)
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['OAUTH2_PROVIDERS'] = {
     'github': {
@@ -29,12 +40,9 @@ app.config['OAUTH2_PROVIDERS'] = {
     },
 }
 
-
-celery = Celery(app.name)
-
-@celery.task
-def creating_random_value():
-    pass
+# @celery.on_after_configure.connect
+# def setup_periodic_task(sender, **kwargs):
+#     sender.add_periodic_task(10.0, creating_random_value.s())
 
 
 def get_app():
@@ -46,28 +54,28 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/home')
+def home_page(arg):
+    return str(arg)
+
+
 @app.route('/git-webhook')
 def git_webhook():
-    return str(number.value)
+    pass
 
 
 def random_value_fabrication():
-    while True:
-        with number.get_lock():
-            number.value = randint(1, 999)
-        sleep(5)
+    number = randint(1, 999)
+    print(number)
 
 
 if __name__ == '__main__':
-    # def start_app():
-    #     return app.run(debug=True)
+    app.run(debug=True)
 
 
-    mp.freeze_support()
-    number = mp.Value('i', 0, lock=True)
 
-    p_1 = mp.Process(target=app.run)
-    p_2 = mp.Process(target=random_value_fabrication)
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
+scheduler.add_job(id='test-job', func=random_value_fabrication, trigger='interval', seconds=5)
 
-    p_1.start()
-    p_2.start()

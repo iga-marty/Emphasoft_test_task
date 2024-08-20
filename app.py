@@ -51,7 +51,7 @@ def load_user(id):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', passed=str(app.config.get('PASSED_VALUE')))
 
 
 @app.route('/logout')
@@ -152,11 +152,6 @@ with app.app_context():
     db.create_all()
 
 
-# @app.route('/home')
-# def home_page():
-#     return str(app.config.get('PASSED_VALUE'))
-
-
 def passed_value_fabrication():
     value = randint(1, 999)
     app.config['PASSED_VALUE'] = value
@@ -164,6 +159,7 @@ def passed_value_fabrication():
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
+
 
 passed_value_fabrication()
 

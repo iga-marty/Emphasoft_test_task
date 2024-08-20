@@ -155,6 +155,7 @@ with app.app_context():
 def passed_value_fabrication():
     value = randint(1, 999)
     app.config['PASSED_VALUE'] = value
+    print(str(app.config.get('PASSED_VALUE')))
 
 
 if __name__ == '__main__':

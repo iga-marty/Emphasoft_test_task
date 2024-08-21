@@ -35,7 +35,7 @@ app.config['OAUTH2_PROVIDERS'] = {
 }
 
 db = SQLAlchemy(app)
-db.create_all()
+db.init_app(app)
 login = LoginManager(app)
 login.login_view = 'index'
 

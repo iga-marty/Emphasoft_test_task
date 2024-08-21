@@ -159,13 +159,10 @@ def passed_value_fabrication():
     app.config['PASSED_VALUE'] = value
 
 
-if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
-
-
-passed_value_fabrication()
-
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
 scheduler.add_job(id='test-job', func=passed_value_fabrication, trigger='interval', seconds=5)
+
+if __name__ == '__main__':
+    app.run(debug=False, host='0.0.0.0')

@@ -35,9 +35,6 @@ app.config['OAUTH2_PROVIDERS'] = {
 }
 
 db = SQLAlchemy(app)
-
-db.init_app(app)
-
 login = LoginManager(app)
 login.login_view = 'index'
 
@@ -47,10 +44,6 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), nullable=True)
-
-
-with app.app_context():
-    db.create_all()
 
 
 @login.user_loader

@@ -13,9 +13,11 @@ from flask_sqlalchemy import SQLAlchemy
 load_dotenv()
 
 app = Flask(__name__)
+value = randint(1, 999)
 
 app.config['SECRET_KEY'] = 'top secret!'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['PASSED_VALUE'] = value
 app.config['OAUTH2_PROVIDERS'] = {
     # GitHub OAuth 2.0 documentation:
     # https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps

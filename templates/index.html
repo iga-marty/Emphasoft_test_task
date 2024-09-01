@@ -9,15 +9,14 @@
 			$.ajax({
 				url: $SCRIPT_ROOT + "/_content",
 				cache: false,
-				success: function(html){
-					$("#content").html(html);
+				success: function(text){
+					$("#content").text(text);
 				}
 			});
 		}
 
 		$(document).ready(function(){
-			show();
-			setInterval('show()', 5000);
+			setInterval(show, 5000);
 		});
 	</script>
   </head>

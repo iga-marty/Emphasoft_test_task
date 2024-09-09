@@ -150,6 +150,12 @@ def oauth2_callback(provider):
     return redirect(url_for('index'))
 
 
+# autoreload data
+@app.route('/_content')
+def get_content():
+    return str('Data: {}'.format(app.config.get('PASSED_VALUE')))
+
+
 with app.app_context():
     db.create_all()
 

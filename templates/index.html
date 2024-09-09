@@ -2,6 +2,23 @@
 <html>
     <head>
         <link rel="stylesheet" href="/static/styles.css">
+        <script>$SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>
+            function show()	{
+                $.ajax({
+                    url: $SCRIPT_ROOT + "/_content",
+                    cache: false,
+                    success: function(text){
+                        $("#content").text(text);
+                    }
+                });
+            }
+
+            $(document).ready(function(){
+                setInterval(show, 5000);
+            });
+        </script>
     </head>
 
     <body>
@@ -12,7 +29,7 @@
                 <h2>Hi, {{ current_user.username }}!</h2>
                 <h2>Data: {{ passed }}</h2>
 
-                <div> <a class="btn-slide" href="{{ url_for('oauth2_authorize', provider='github') }}" >
+                <div> <a class="btn-slide" href="{{ url_for('logout') }}">
                     <div class="circle">
                         <img src="/static/GitHub_Invertocat_Logo.svg.png">
                         <i class="fa-solid fa-film"></i>
@@ -29,7 +46,7 @@
                     <li>JavaScript</li>
                 </ul>
 
-                <div> <a class="btn-slide" href="{{ url_for('oauth2_authorize', provider='github') }}" >
+                <div> <a class="btn-slide" href="{{ url_for('oauth2_authorize', provider='github') }}">
                     <div class="circle">
                         <img src="/static/GitHub_Invertocat_Logo.svg.png">
                         <i class="fa-solid fa-film"></i>

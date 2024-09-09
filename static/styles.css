@@ -20,6 +20,14 @@ h1 {
     padding: 15% 5% 0%;
 }
 
+h2 {
+    position: relative;
+    color: #ffff;
+    font-size: 35px;
+    letter-spacing: 1.5px;
+    padding: 10% 15% 0%;
+}
+
 ul {
     font-family: 'Nunito Sans';
     font-size: 24px;
@@ -96,6 +104,7 @@ ul {
     
 @media (max-width: 540px) {
     h1 { font-size: 36px; }
+    h2 { font-size: 28px; }
     p { font-size: 20px; }
     
     .btn-slide { width: 240px; }

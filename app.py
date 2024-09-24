@@ -6,6 +6,7 @@ from random import randint
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 from flask import Flask, redirect, url_for, render_template, flash, session, current_app, request, abort
+from flask_socketio import SocketIO
 from flask_apscheduler import APScheduler
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
@@ -13,6 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 load_dotenv()
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 value = randint(1, 999)
 
 app.config['SECRET_KEY'] = 'top secret!'
@@ -38,6 +40,8 @@ db = SQLAlchemy(app)
 login = LoginManager(app)
 login.login_view = 'index'
 
+room = 'general_room'
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -53,7 +57,10 @@ def load_user(id):
 
 @app.route('/')
 def index():
-    return render_template('index.html', passed=str(app.config.get('PASSED_VALUE')))
+    if current_user.is_authenticated:
+        return render_template('index.html', passed=str(app.config.get('PASSED_VALUE')))
+    else:
+        return render_template('index.html')
 
 
 @app.route('/logout')
@@ -147,13 +154,14 @@ def oauth2_callback(provider):
 
     # log the user in
     login_user(user)
+
     return redirect(url_for('index'))
 
 
-# autoreload data
-@app.route('/_content')
-def get_content():
-    return str('Data: {}'.format(app.config.get('PASSED_VALUE')))
+# SocketIO emit
+def emit_data():
+    content = app.config.get('PASSED_VALUE')
+    socketio.emit('content_update', str('Data: {}'.format(content)))
 
 
 with app.app_context():
@@ -168,7 +176,8 @@ def passed_value_fabrication():
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
-scheduler.add_job(id='test-job', func=passed_value_fabrication, trigger='interval', seconds=5)
+scheduler.add_job(id='job_1', func=passed_value_fabrication, trigger='interval', seconds=5)
+scheduler.add_job(id='job_2', func=emit_data, trigger='interval', seconds=5)
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    socketio.run(app, host='0.0.0.0', allow_unsafe_werkzeug=True)

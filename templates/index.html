@@ -3,26 +3,17 @@
     <head>
         <link rel="stylesheet" href="/static/styles.css">
         <script>$SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
         <script>
-            function show()	{
-                $.ajax({
-                    url: $SCRIPT_ROOT + "/_content",
-                    cache: false,
-                    success: function(text){
-                        $("#content").text(text);
-                    }
-                });
-		    }
-
-            $(document).ready(function(){
-                setInterval(show, 5000);
+            const socket = io.connect($SCRIPT_ROOT);
+            socket.on('content_update', function(text) {
+                const content = document.getElementById("content");
+                if (content) {content.innerHTML = text};
             });
         </script>
     </head>
 
     <body>
-
         <section class="background-main">
         <div id="wrap">
             {% if current_user.is_authenticated %}
@@ -37,7 +28,9 @@
 
                     <span class="title">Log out</span>
                     <span class="title title-hover"> :( </span>
-                    </a> </div>
+                    </a>
+                </div>
+
             {% else %}
                 <h1>Welcome to my mini pet-project!</h1>
                 <ul>
@@ -54,11 +47,10 @@
 
                     <span class="title">Log in</span>
                     <span class="title title-hover">with GitHub</span>
-                    </a> </div>
+                    </a>
+                </div>
             {% endif %}
         </div>
-        
         </section>
-        
     </body>
 </html>

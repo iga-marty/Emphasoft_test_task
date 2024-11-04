@@ -89,9 +89,9 @@ ul {
     font-weight: bold;
     }
     
-    img{
+img{
     position:absolute;
-    height: 40px; 
+    height: 40px;
     width: 40px;
     top: 50%;
     left: 50%;
@@ -108,4 +108,17 @@ ul {
     p { font-size: 20px; }
     
     .btn-slide { width: 240px; }
+}
+
+.qr_block {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  top: -200px;
+  left: 500px;
+}
+
+.qr_block img {
+	min-width: 100%;
+	min-height: 100%;
 }

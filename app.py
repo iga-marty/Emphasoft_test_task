@@ -158,6 +158,10 @@ def oauth2_callback(provider):
     return redirect(url_for('index'))
 
 
+@app.route('/qr-creating')
+def qr_creating():
+    pass
+
 # SocketIO emit
 def emit_data():
     content = app.config.get('PASSED_VALUE')
